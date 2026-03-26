@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Boost Button — Animation Variants</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background:
+        radial-gradient(circle at top, rgba(58, 105, 166, 0.22), transparent 34%),
+        linear-gradient(180deg, #1d2039 0%, #121523 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 48px;
+      font-family: 'Lato', sans-serif;
+      padding: 60px 24px;
+    }
+
+    h1 {
+      color: rgba(255,255,255,0.25);
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .variants {
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+      align-items: center;
+      width: 100%;
+    }
+
+    .variant {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .variant-label {
+      color: rgba(255,255,255,0.5);
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    .variant-desc {
+      color: rgba(255,255,255,0.25);
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      text-align: center;
+      max-width: 240px;
+      line-height: 1.6;
+    }
+
+    .boost-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 132px;
+      height: 40px;
+      padding: 12px;
+      background: #07294b;
+      border: 1px solid #ffffff;
+      border-radius: 2px;
+      overflow: hidden;
+      cursor: pointer;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+      transform-origin: center;
+      transition:
+        transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.22s ease,
+        border-color 0.22s ease,
+        background 0.22s ease;
+      box-shadow:
+        0 8px 20px rgba(0,0,0,0.24),
+        inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .boost-btn:hover:not(.is-boosted) {
+      transform: translateY(-1px);
+      box-shadow:
+        0 14px 30px rgba(0,0,0,0.32),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+
+    .boost-btn:focus-visible {
+      box-shadow:
+        0 0 0 3px rgba(255,255,255,0.14),
+        0 12px 28px rgba(0,0,0,0.28),
+        inset 0 1px 0 rgba(255,255,255,0.12);
+    }
+
+    .boost-btn:active:not(.is-boosted) {
+      transform: translateY(1px) scale(0.975);
+      transition-duration: 0.08s;
+    }
+
+    .btn-label {
+      position: absolute;
+      font-family: 'Lato', sans-serif;
+      font-weight: 700;
+      font-size: 13px;
+      color: #ffffff;
+      letter-spacing: -0.36px;
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+      text-shadow: 0 1px 0 rgba(0,0,0,0.12);
+    }
+
+    .btn-a.is-boosted {
+      animation: a-btn-pulse 0.58s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .btn-a .boost-label  { opacity: 1; transform: translateY(0); }
+    .btn-a .boosted-label { opacity: 0; transform: translateY(10px); }
+
+    .btn-a.is-boosted .boost-label {
+      animation: a-label-exit 0.18s ease forwards;
+    }
+
+    .btn-a.is-boosted .boosted-label {
+      animation: a-label-enter 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s forwards;
+    }
+
+    .btn-a .shimmer {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, transparent 26%, rgba(255,255,255,0.08) 42%, rgba(255,255,255,0.26) 50%, rgba(255,255,255,0.08) 58%, transparent 74%);
+      transform: translateX(-150%);
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .btn-a.is-boosted .shimmer {
+      animation: a-shimmer 0.62s ease 0.05s forwards;
+    }
+
+    .btn-a::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.16), transparent 62%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .btn-a.is-boosted::after {
+      animation: a-flash 0.4s ease-out forwards;
+    }
+
+    @keyframes a-btn-pulse {
+      0%   { transform: translateY(0) scale(1); box-shadow: 0 8px 20px rgba(0,0,0,0.24), 0 0 0 0 rgba(255,255,255,0), inset 0 1px 0 rgba(255,255,255,0.08); }
+      18%  { transform: translateY(1px) scale(0.965); box-shadow: 0 6px 14px rgba(0,0,0,0.22), 0 0 0 0 rgba(255,255,255,0), inset 0 1px 0 rgba(255,255,255,0.06); }
+      52%  { transform: translateY(-1px) scale(1.035); box-shadow: 0 18px 32px rgba(0,0,0,0.34), 0 0 0 6px rgba(255,255,255,0.1), inset 0 1px 0 rgba(255,255,255,0.14); }
+      76%  { transform: translateY(0) scale(0.992); box-shadow: 0 11px 22px rgba(0,0,0,0.28), 0 0 0 3px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.1); }
+      100% { transform: translateY(0) scale(1); box-shadow: 0 10px 22px rgba(0,0,0,0.3), 0 0 0 0 rgba(255,255,255,0), inset 0 1px 0 rgba(255,255,255,0.08); }
+    }
+
+    @keyframes a-label-exit {
+      from { opacity: 1; transform: translateY(0); }
+      to   { opacity: 0; transform: translateY(-9px); }
+    }
+
+    @keyframes a-label-enter {
+      from { opacity: 0; transform: translateY(9px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes a-shimmer {
+      from { transform: translateX(-150%); }
+      to   { transform: translateX(200%); }
+    }
+
+    @keyframes a-flash {
+      0%   { opacity: 0; }
+      35%  { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    .btn-c {
+      background: linear-gradient(180deg, #0a325c 0%, #07294b 100%);
+    }
+
+    .btn-c .boost-label  { opacity: 1; transition: opacity 0.06s ease 0.22s; }
+    .btn-c .boosted-label { opacity: 0; }
+
+    .btn-c.is-boosted .boost-label  { opacity: 0; transition: opacity 0.05s ease; }
+
+    .btn-c.is-boosted .boosted-label {
+      opacity: 0;
+      animation: c-text-in 0.01s ease 0.25s forwards;
+    }
+
+    .btn-c .ink {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(255,255,255,0.92) 0%, #ffffff 55%, rgba(225,239,255,0.92) 100%);
+      transform: translateX(-102%);
+      pointer-events: none;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);
+    }
+
+    .btn-c.is-boosted .ink {
+      animation: c-ink-wipe 0.55s cubic-bezier(0.77, 0, 0.18, 1) forwards;
+    }
+
+    .btn-c::after {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+      transform: translateX(-140%);
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .btn-c.is-boosted::after {
+      animation: c-trail 0.55s cubic-bezier(0.77, 0, 0.18, 1) forwards;
+    }
+
+    .btn-c.is-boosted .boosted-label {
+      color: #07294b;
+      animation: c-text-in 0.01s ease 0.25s forwards, c-text-colour 0.55s ease forwards;
+    }
+
+    @keyframes c-ink-wipe {
+      0%   { transform: translateX(-102%); }
+      42%  { transform: translateX(0%); }
+      100% { transform: translateX(102%); }
+    }
+
+    @keyframes c-text-in { to { opacity: 1; } }
+
+    @keyframes c-text-colour {
+      0%, 38% { color: #07294b; }
+      55%, 100% { color: #ffffff; }
+    }
+
+    @keyframes c-trail {
+      0%   { transform: translateX(-140%); opacity: 0; }
+      20%  { opacity: 0.45; }
+      100% { transform: translateX(150%); opacity: 0; }
+    }
+
+    .btn-d .boost-label  { opacity: 1; }
+
+    .btn-d .boosted-label {
+      opacity: 0;
+      display: flex;
+      gap: 0;
+      perspective: 240px;
+    }
+
+    .btn-d.is-boosted {
+      animation: d-btn-settle 0.46s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .btn-d.is-boosted .boost-label {
+      animation: d-whole-exit 0.14s ease forwards;
+    }
+
+    .btn-d.is-boosted .boosted-label {
+      opacity: 1;
+    }
+
+    .btn-d.is-boosted .boosted-label .char {
+      display: inline-block;
+      transform-origin: 50% 100%;
+      animation: d-char-in 0.36s cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation-delay: calc(0.09s + (var(--i, 0) * 0.025s));
+      will-change: transform, opacity, filter;
+    }
+
+    @keyframes d-whole-exit {
+      from { opacity: 1; transform: translateY(0); }
+      to   { opacity: 0; transform: translateY(-8px); }
+    }
+
+    @keyframes d-char-in {
+      0% {
+        opacity: 0;
+        transform: translateY(10px) rotateX(-80deg) scaleY(0.8);
+        filter: blur(4px);
+      }
+      60% {
+        opacity: 1;
+        transform: translateY(-1px) rotateX(12deg) scaleY(1.04);
+        filter: blur(0);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) rotateX(0deg) scaleY(1);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes d-btn-settle {
+      0%   { transform: scale(1); box-shadow: 0 8px 20px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.08); }
+      45%  { transform: scale(1.025); box-shadow: 0 16px 28px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.12); }
+      100% { transform: scale(1); box-shadow: 0 10px 22px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08); }
+    }
+
+    .btn-e-wrap {
+      position: relative;
+      width: 132px;
+      height: 40px;
+      filter: drop-shadow(0 14px 24px rgba(0,0,0,0.18));
+    }
+
+    .btn-e {
+      box-shadow:
+        0 8px 18px rgba(0,0,0,0.26),
+        inset 0 2px 3px rgba(255,255,255,0.12),
+        inset 0 -2px 3px rgba(0,0,0,0.25);
+      transition:
+        transform 0.16s ease,
+        box-shadow 0.12s ease,
+        background 0.12s ease;
+    }
+
+    .btn-e:active:not(.is-boosted) {
+      transform: translateY(1px);
+      box-shadow:
+        0 4px 10px rgba(0,0,0,0.22),
+        inset 0 4px 8px rgba(0,0,0,0.55),
+        inset 0 2px 4px rgba(0,0,0,0.4),
+        inset 2px 0 4px rgba(0,0,0,0.2),
+        inset -2px 0 4px rgba(0,0,0,0.2) !important;
+      background: #062338 !important;
+      transition:
+        transform 0.06s ease,
+        box-shadow 0.06s ease,
+        background 0.06s ease !important;
+    }
+
+    .btn-e.is-boosted {
+      transform: translateY(1px);
+      box-shadow:
+        0 3px 10px rgba(0,0,0,0.18),
+        inset 0 6px 12px rgba(0,0,0,0.65),
+        inset 0 3px 6px rgba(0,0,0,0.45),
+        inset 3px 0 6px rgba(0,0,0,0.25),
+        inset -3px 0 6px rgba(0,0,0,0.25),
+        inset 0 -1px 2px rgba(255,255,255,0.06);
+      background: #062840;
+      transition:
+        transform 0.18s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        box-shadow 0.18s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+        background 0.18s ease;
+    }
+
+    .btn-e .boost-label  { opacity: 1; transform: translateY(0); }
+    .btn-e .boosted-label { opacity: 0; transform: translateY(8px); }
+
+    .btn-e.is-boosted .boost-label {
+      animation: e-label-exit 0.15s ease 0.1s forwards;
+    }
+
+    .btn-e.is-boosted .boosted-label {
+      animation: e-label-enter 0.25s cubic-bezier(0.34, 1.4, 0.64, 1) 0.22s forwards;
+    }
+
+    .btn-e::after {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.1), transparent 45%);
+      opacity: 1;
+      pointer-events: none;
+      transition: opacity 0.14s ease;
+    }
+
+    .btn-e.is-boosted::after {
+      opacity: 0.28;
+    }
+
+    @keyframes e-label-exit {
+      from { opacity: 1; transform: translateY(0); }
+      to   { opacity: 0; transform: translateY(-6px); }
+    }
+
+    @keyframes e-label-enter {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reset-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 2px;
+      color: rgba(255,255,255,0.35);
+      font-family: 'Lato', sans-serif;
+      font-size: 11px;
+      letter-spacing: 1px;
+      padding: 8px 20px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .reset-btn:hover {
+      border-color: rgba(255,255,255,0.4);
+      color: rgba(255,255,255,0.6);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Boost Button — Animation Variants</h1>
+
+  <div class="variants">
+    <div class="variant">
+      <span class="variant-label">A — Spring Slide + Shimmer</span>
+      <button class="boost-btn btn-a" id="btnA" type="button" onclick="boost('A')">
+        <span class="shimmer"></span>
+        <span class="btn-label boost-label">BOOST BY 25%</span>
+        <span class="btn-label boosted-label">BOOSTED BY 25%</span>
+      </button>
+      <span class="variant-desc">Scale punch with a cleaner settle, faster label handoff, and a brighter confirmation sweep</span>
+    </div>
+
+    <div class="variant">
+      <span class="variant-label">C — Ink Wipe</span>
+      <button class="boost-btn btn-c" id="btnC" type="button" onclick="boost('C')">
+        <span class="ink"></span>
+        <span class="btn-label boost-label">BOOST BY 25%</span>
+        <span class="btn-label boosted-label">BOOSTED BY 25%</span>
+      </button>
+      <span class="variant-desc">A smoother scan-style wipe with a brighter fill and trailing glint so the text swap feels more deliberate</span>
+    </div>
+
+    <div class="variant">
+      <span class="variant-label">D — Character Ticker</span>
+      <button class="boost-btn btn-d" id="btnD" type="button" onclick="boost('D')">
+        <span class="btn-label boost-label">BOOST BY 25%</span>
+        <span class="btn-label boosted-label">
+          <span class="char" style="--i:0">B</span><span class="char" style="--i:1">O</span><span class="char" style="--i:2">O</span><span class="char" style="--i:3">S</span><span class="char" style="--i:4">T</span><span class="char" style="--i:5">E</span><span class="char" style="--i:6">D</span><span class="char" style="--i:7">&nbsp;</span><span class="char" style="--i:8">B</span><span class="char" style="--i:9">Y</span><span class="char" style="--i:10">&nbsp;</span><span class="char" style="--i:11">2</span><span class="char" style="--i:12">5</span><span class="char" style="--i:13">%</span>
+        </span>
+      </button>
+      <span class="variant-desc">Blurred rotational entry makes the stagger read more like a real ticker instead of simple per-letter fades</span>
+    </div>
+
+    <div class="variant">
+      <span class="variant-label">E — Physical Press</span>
+      <div class="btn-e-wrap" id="wrapE">
+        <button class="boost-btn btn-e" id="btnE" type="button" onclick="boost('E')">
+          <span class="btn-label boost-label">BOOST BY 25%</span>
+          <span class="btn-label boosted-label">BOOSTED BY 25%</span>
+        </button>
+      </div>
+      <span class="variant-desc">Leans further into the tactile press with a deeper sink, quieter highlight, and a more convincing latched state</span>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetAll()">Reset All</button>
+
+  <script>
+    const spring = 'cubic-bezier(0.34, 1.56, 0.64, 1)';
+    const springE = 'cubic-bezier(0.34, 1.40, 0.64, 1)';
+    const ease = 'ease';
+
+    const reverseAnimations = {
+      A(btn) {
+        const boosted = btn.querySelector('.boosted-label');
+        const boost = btn.querySelector('.boost-label');
+        const anims = [
+          boosted.animate(
+            [{ opacity: 1, transform: 'translateY(0)' }, { opacity: 0, transform: 'translateY(9px)' }],
+            { duration: 180, easing: ease, fill: 'forwards' }
+          ),
+          boost.animate(
+            [{ opacity: 0, transform: 'translateY(-9px)' }, { opacity: 1, transform: 'translateY(0)' }],
+            { duration: 320, delay: 120, easing: spring, fill: 'forwards' }
+          ),
+        ];
+        return Promise.all(anims.map((a) => a.finished)).then(() => anims.forEach((a) => a.cancel()));
+      },
+
+      C(btn) {
+        const ink = btn.querySelector('.ink');
+        const boosted = btn.querySelector('.boosted-label');
+        const boost = btn.querySelector('.boost-label');
+        const anims = [
+          ink.animate(
+            [{ transform: 'translateX(102%)' }, { transform: 'translateX(0%)', offset: 0.42 }, { transform: 'translateX(-102%)' }],
+            { duration: 550, easing: 'cubic-bezier(0.77, 0, 0.18, 1)', fill: 'forwards' }
+          ),
+          boosted.animate(
+            [{ opacity: 1 }, { opacity: 0 }],
+            { duration: 60, easing: ease, fill: 'forwards' }
+          ),
+          boost.animate(
+            [{ opacity: 0 }, { opacity: 1 }],
+            { duration: 60, delay: 250, easing: ease, fill: 'forwards' }
+          ),
+        ];
+        return Promise.all(anims.map((a) => a.finished)).then(() => anims.forEach((a) => a.cancel()));
+      },
+
+      D(btn) {
+        const boosted = btn.querySelector('.boosted-label');
+        const boost = btn.querySelector('.boost-label');
+        const chars = boosted.querySelectorAll('.char');
+        const anims = [
+          boosted.animate(
+            [{ opacity: 1, transform: 'translateY(0)' }, { opacity: 0, transform: 'translateY(-8px)' }],
+            { duration: 150, easing: ease, fill: 'forwards' }
+          ),
+          boost.animate(
+            [{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(0)' }],
+            { duration: 300, delay: 120, easing: spring, fill: 'forwards' }
+          ),
+          ...Array.from(chars).map((char, index) =>
+            char.animate(
+              [
+                { opacity: 1, transform: 'translateY(0) rotateX(0deg) scaleY(1)', filter: 'blur(0)' },
+                { opacity: 0, transform: 'translateY(-10px) rotateX(70deg) scaleY(0.85)', filter: 'blur(3px)' }
+              ],
+              { duration: 180, delay: index * 12, easing: 'ease-in', fill: 'forwards' }
+            )
+          ),
+        ];
+        return Promise.all(anims.map((a) => a.finished)).then(() => anims.forEach((a) => a.cancel()));
+      },
+
+      E(btn) {
+        const boosted = btn.querySelector('.boosted-label');
+        const boost = btn.querySelector('.boost-label');
+        const anims = [
+          boosted.animate(
+            [{ opacity: 1, transform: 'translateY(0)' }, { opacity: 0, transform: 'translateY(6px)' }],
+            { duration: 150, easing: ease, fill: 'forwards' }
+          ),
+          boost.animate(
+            [{ opacity: 0, transform: 'translateY(-6px)' }, { opacity: 1, transform: 'translateY(0)' }],
+            { duration: 250, delay: 120, easing: springE, fill: 'forwards' }
+          ),
+        ];
+        return Promise.all(anims.map((a) => a.finished)).then(() => anims.forEach((a) => a.cancel()));
+      },
+    };
+
+    const busy = new Set();
+
+    function boost(v) {
+      if (busy.has(v)) return;
+      const btn = document.getElementById('btn' + v);
+
+      if (btn.classList.contains('is-boosted')) {
+        busy.add(v);
+        reverseAnimations[v](btn).then(() => {
+          btn.classList.remove('is-boosted');
+          busy.delete(v);
+        });
+      } else {
+        btn.classList.add('is-boosted');
+      }
+    }
+
+    function resetAll() {
+      ['A', 'C', 'D', 'E'].forEach((v) => {
+        busy.delete(v);
+        const btn = document.getElementById('btn' + v);
+        btn.getAnimations().forEach((a) => a.cancel());
+        btn.querySelectorAll('*').forEach((el) => el.getAnimations().forEach((a) => a.cancel()));
+        btn.classList.remove('is-boosted');
+      });
+    }
+  </script>
+</body>
+</html>

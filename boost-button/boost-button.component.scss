@@ -1,0 +1,142 @@
+// ─────────────────────────────────────────────
+// Boost Button — micro-animation
+// States: default → boosted
+// ─────────────────────────────────────────────
+
+.boost-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 132px;
+  height: 40px;
+  padding: 12px;
+  background: #07294b;
+  border: 1px solid #ffffff;
+  border-radius: 2px;
+  overflow: hidden;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  transform-origin: center;
+  transition:
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.22s ease,
+    border-color 0.22s ease,
+    background 0.22s ease;
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+  &:hover:not(.is-boosted) {
+    transform: translateY(-1px);
+    box-shadow:
+      0 14px 30px rgba(0, 0, 0, 0.32),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  &:focus-visible {
+    box-shadow:
+      0 0 0 3px rgba(255, 255, 255, 0.14),
+      0 12px 28px rgba(0, 0, 0, 0.28),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+
+  // Press feedback
+  &:active:not(.is-boosted) {
+    transform: translateY(1px) scale(0.975);
+    transition-duration: 0.08s;
+  }
+
+  // Boosted state: scale punch + border glow
+  &.is-boosted {
+    animation: btn-pulse 0.58s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    cursor: default;
+  }
+}
+
+// ─── Text labels ───────────────────────────────
+
+.btn-label {
+  position: absolute;
+  font-family: 'Lato', sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  color: #ffffff;
+  letter-spacing: -0.36px;
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
+}
+
+// Default label: visible → exits upward on boost
+.boost-label {
+  opacity: 1;
+  transform: translateY(0);
+
+  .is-boosted & {
+    animation: label-exit 0.18s ease forwards;
+  }
+}
+
+// Boosted label: hidden below → enters from below on boost
+.boosted-label {
+  opacity: 0;
+  transform: translateY(10px);
+
+  .is-boosted & {
+    animation: label-enter 0.42s cubic-bezier(0.34, 1.56, 0.64, 1) 0.14s forwards;
+  }
+}
+
+// ─── Shimmer overlay ───────────────────────────
+
+.shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 26%,
+    rgba(255, 255, 255, 0.08) 42%,
+    rgba(255, 255, 255, 0.26) 50%,
+    rgba(255, 255, 255, 0.08) 58%,
+    transparent 74%
+  );
+  transform: translateX(-150%);
+  pointer-events: none;
+  mix-blend-mode: screen;
+
+  .is-boosted & {
+    animation: shimmer-sweep 0.62s ease 0.05s forwards;
+  }
+}
+
+// ─── Keyframes ─────────────────────────────────
+
+// Button: quick scale-down → scale-up overshoot → settle, with border glow
+@keyframes btn-pulse {
+  0%   { transform: translateY(0) scale(1); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24), 0 0 0 0 rgba(255, 255, 255, 0), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+  18%  { transform: translateY(1px) scale(0.965); box-shadow: 0 6px 14px rgba(0, 0, 0, 0.22), 0 0 0 0 rgba(255, 255, 255, 0), inset 0 1px 0 rgba(255, 255, 255, 0.06); }
+  52%  { transform: translateY(-1px) scale(1.035); box-shadow: 0 18px 32px rgba(0, 0, 0, 0.34), 0 0 0 6px rgba(255, 255, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.14); }
+  76%  { transform: translateY(0) scale(0.992); box-shadow: 0 11px 22px rgba(0, 0, 0, 0.28), 0 0 0 3px rgba(255, 255, 255, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.1); }
+  100% { transform: translateY(0) scale(1); box-shadow: 0 10px 22px rgba(0, 0, 0, 0.3), 0 0 0 0 rgba(255, 255, 255, 0), inset 0 1px 0 rgba(255, 255, 255, 0.08); }
+}
+
+// Old label slides up and fades out
+@keyframes label-exit {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-9px); }
+}
+
+// New label slides in from below with a spring overshoot
+@keyframes label-enter {
+  from { opacity: 0; transform: translateY(9px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// Shimmer sweeps left → right
+@keyframes shimmer-sweep {
+  from { transform: translateX(-150%); }
+  to   { transform: translateX(200%); }
+}
